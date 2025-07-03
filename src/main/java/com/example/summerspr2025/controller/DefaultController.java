@@ -30,6 +30,11 @@ public class DefaultController {
     public String index(){
         return "index";
     }
+
+    @RequestMapping("/mul")
+    public String mul(){
+        return "mul";
+    }
     @RequestMapping("/add2")
     public String add2(int a, int b, Model model){
 

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+</head>
+<body>
+<div>detail board</div>
+
+id: <input type="number" id="id"><br>
+<button onclick="detail_board()">입력하기!</button>
+<script>
+  function detail_board(){
+    $.ajax({
+      url: '/api/board/detail/' + $("#id").val(),
+      method: 'GET',
+      data: {
+        title:$("#title").val()
+        , content: $("#content").val()
+        , author: $("#author").val()
+      },
+      success: function (data, status, xhr){
+        alert("data: " + JSON.stringify(data));
+      },
+      error: function (data, status, err){
+
+      },
+      complete: function (){
+
+      }
+    });
+  }
+</script>
+</body>
+</html>
