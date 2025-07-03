@@ -15,13 +15,12 @@ id: <input type="number" id="id"><br>
     $.ajax({
       url: '/api/board/detail/' + $("#id").val(),
       method: 'GET',
-      data: {
-        title:$("#title").val()
-        , content: $("#content").val()
-        , author: $("#author").val()
-      },
       success: function (data, status, xhr){
         alert("data: " + JSON.stringify(data));
+        let board = data["board"];
+        $("#title").val(board.title);
+        $("#content").val(board["content"]);
+        $("#author").val(board["author"]);
       },
       error: function (data, status, err){
 
