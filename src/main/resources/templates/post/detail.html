@@ -12,11 +12,11 @@ id: <input type="number" id="id"><br>
 title: <input type="number" id="title"><br>
 content: <input type="number" id="content"><br>
 author: <input type="number" id="author"><br>
-<button onclick="detail_board()">입력하기!</button>
+<button onclick="detail_post()">입력하기!</button>
 <script>
-  function detail_board(){
+  function detail_post(){
     $.ajax({
-      url: '/api/board/detail/' + $("#id").val(),
+      url: '/api/post/detail/' + $("#id").val(),
       method: 'GET',
       success: function (data, status, xhr){
         alert("data: " + JSON.stringify(data));
