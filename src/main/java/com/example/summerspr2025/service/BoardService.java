@@ -7,7 +7,7 @@ import java.util.Map;
 public interface BoardService {
     Map<String, Object> create(Map<String, Object> param);
     Map<String, Object> update(Map<String, Object> param);
-    Map<String, Object> delete(int id);
-    Map<String, Object> detail(int id);
+    Map<String, Object> delete(long id);
+    Map<String, Object> detail(long id);
     Map<String, Object> list();
 }

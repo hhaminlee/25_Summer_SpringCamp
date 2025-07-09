@@ -13,23 +13,59 @@ title: <input type="text" id="title"><br>
 content: <input type="text" id="content"><br>
 author: <input type="text" id="author"><br>
 <button onclick="detail_board()">입력하기!</button>
+<button onclick="update_board()">수정하기</button>
+<button onclick="delete_board()">삭제하기</button>
+
 <script>
+  function delete_board(){
+    $.ajax({
+      url: '/api/board/delete',
+      method: 'GET',
+      data : {
+        id : $("#id").val()
+      },
+      success: function (data, status, xhr) {
+        alert("data : : " + JSON.stringify(data));
+      },
+      error: function (data, status, err) {
+      },
+      complete: function () {
+      }
+    });
+  }
+  function update_board(){
+    $.ajax({
+      url: '/api/board/update',
+      method: 'GET',
+      data : {
+        id : $("#id").val()
+        , title : $("#title").val()
+        , content : $("#content").val()
+        , author : $("#author").val()
+      },
+      success: function (data, status, xhr) {
+        alert("data : : " + JSON.stringify(data));
+      },
+      error: function (data, status, err) {
+      },
+      complete: function () {
+      }
+    });
+  }
   function detail_board(){
     $.ajax({
-      url: '/api/board/detail/' + $("#id").val(),
+      url: '/api/board/detail/' + $("#input_id").val(),
       method: 'GET',
-      success: function (data, status, xhr){
-        alert("data: " + JSON.stringify(data));
+      success: function (data, status, xhr) {
+        alert("data : : " + JSON.stringify(data));
         let board = data["board"];
         $("#title").val(board.title);
         $("#content").val(board["content"]);
         $("#author").val(board["author"]);
       },
-      error: function (data, status, err){
-
+      error: function (data, status, err) {
       },
-      complete: function (){
-
+      complete: function () {
       }
     });
   }
