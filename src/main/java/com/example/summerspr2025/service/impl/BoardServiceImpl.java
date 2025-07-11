@@ -1,12 +1,14 @@
 package com.example.summerspr2025.service.impl;
 
 import com.example.summerspr2025.domain.Board;
+import com.example.summerspr2025.dto.BoardDto;
 import com.example.summerspr2025.repository.BoardRepository;
 import com.example.summerspr2025.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -14,41 +16,40 @@ public class BoardServiceImpl implements BoardService {
 
     final BoardRepository boardRepository;
     @Override
-    public Map<String, Object> create(Map<String, Object> param) {
-        String title = param.get("title").toString();
-        String content = param.get("content").toString();
-        String author = param.get("author").toString();
+    public BoardDto.CreateResDto create(BoardDto.CreateReqDto param) {
+        String title = param.getTitle();
+        String content = param.getContent();
+        String author = param.getAuthor();
 
         Board board = Board.of(title, content, author);
-        boardRepository.save(board);
+        board = boardRepository.save(board);
 
-        Map<String,Object> map_result = new HashMap<>();
-        map_result.put("code", 200);
-        return map_result;
+        return BoardDto.CreateResDto.builder().id(board.getId()).build();
     }
 
     @Override
-    public Map<String, Object> update(Map<String, Object> param) {
-        int code = 0;
-        long id = Long.parseLong(param.get("id").toString());
+    public BoardDto.UpdateResDto update(BoardDto.UpdateReqDto param) {
+        long id = param.getId();
 
-        // 결과물이 없을 때를 대비해서 optional로
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("No data"));
 
-        if(param.get("title") != null){ board.setTitle((String) param.get("title")); }
-        if(param.get("content") != null){ board.setContent((String) param.get("content")); }
-        if(param.get("author") != null){ board.setAuthor((String) param.get("author")); }
+        if(param.getTitle() != null){ board.setTitle(param.getTitle()); }
+        if(param.getContent() != null){ board.setContent(param.getTitle()); }
+        if(param.getAuthor() != null){ board.setAuthor(param.getAuthor()); }
         boardRepository.save(board);
 
-        Map<String,Object> map_result = new HashMap<>();
-        map_result.put("code", code);
-        return map_result;
+        return BoardDto.UpdateResDto.builder()
+                .id(param.getId())
+                .title(param.getTitle())
+                .content(param.getContent())
+                .author(param.getAuthor())
+                .build();
     }
 
     @Override
-    public Map<String, Object> delete(Map<String, Object> param) {
-        long id = Long.parseLong(param.get("id").toString());
+    public Map<String, Object> delete(BoardDto.DeleteReqDto param) {
+        long id = param.getId();
 
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("No data"));
@@ -61,24 +62,31 @@ public class BoardServiceImpl implements BoardService {
         return map_result;
     }
     @Override
-    public Map<String, Object> detail(long id) {
+    public BoardDto.DetailResDto detail(long id) {
 
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("No data"));
 
-        int resultCode = 200;
-        Map<String,Object> map_result = new HashMap<>();
-        map_result.put("code", resultCode);
-        map_result.put("board", board);
-        return map_result;
+        return BoardDto.DetailResDto.builder()
+                .id(board.getId())
+                .title(board.getTitle())
+                .content(board.getContent())
+                .author(board.getAuthor())
+                .build();
     }
 
     @Override
-    public Map<String, Object> list() {
+    public List<BoardDto.ListResDto> list() {
         List<Board> list = boardRepository.findAll();
         Map<String,Object> map_result = new HashMap<>();
         map_result.put("code", 200);
         map_result.put("list", list);
-        return map_result;
+        return list.stream().map(board -> BoardDto.ListResDto.builder()
+                        .id(board.getId())
+                        .title(board.getTitle())
+                        .content(board.getContent())
+                        .author(board.getAuthor())
+                        .build())
+                .collect(Collectors.toList());
     }
 }

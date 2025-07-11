@@ -60,10 +60,9 @@ author: <input type="text" id="author"><br>
       method: 'GET',
       success: function (data, status, xhr) {
         alert("data : : " + JSON.stringify(data));
-        let board = data["board"];
-        $("#title").val(board.title);
-        $("#content").val(board["content"]);
-        $("#author").val(board["author"]);
+        $("#title").val(data.title);
+        $("#content").val(data.content);
+        $("#author").val(data.author);
       },
       error: function (data, status, err) {
       },

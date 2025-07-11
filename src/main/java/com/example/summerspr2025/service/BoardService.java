@@ -1,13 +1,15 @@
 package com.example.summerspr2025.service;
 
+import com.example.summerspr2025.dto.BoardDto;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 @Service
 public interface BoardService {
-    Map<String, Object> create(Map<String, Object> param);
-    Map<String, Object> update(Map<String, Object> param);
-    Map<String, Object> delete(Map<String, Object> param);
-    Map<String, Object> detail(long id);
-    Map<String, Object> list();
+    BoardDto.CreateResDto create(BoardDto.CreateReqDto param);
+    BoardDto.UpdateResDto update(BoardDto.UpdateReqDto param);
+    Map<String, Object> delete(BoardDto.DeleteReqDto param);
+    BoardDto.DetailResDto detail(long id);
+    List<BoardDto.ListResDto> list();
 }
