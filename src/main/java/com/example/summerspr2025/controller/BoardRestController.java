@@ -2,6 +2,7 @@ package com.example.summerspr2025.controller;
 
 import com.example.summerspr2025.domain.Board;
 import com.example.summerspr2025.dto.BoardDto;
+import com.example.summerspr2025.dto.DefaultDto;
 import com.example.summerspr2025.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -13,16 +14,16 @@ import java.util.*;
 public class BoardRestController {
     final BoardService boardService;
     @PostMapping("")
-    public BoardDto.CreateResDto create(@RequestBody BoardDto.CreateReqDto param){
+    public DefaultDto.CreateResDto create(@RequestBody BoardDto.CreateReqDto param){
         return boardService.create(param);
     }
     @PutMapping("")
-    public BoardDto.UpdateResDto update(@RequestBody BoardDto.UpdateReqDto param){
-        return boardService.update(param);
+    public void update(@RequestBody BoardDto.UpdateReqDto param){
+        boardService.update(param);
     }
     @DeleteMapping("")
-    public Map<String, Object> delete(@RequestBody BoardDto.DeleteReqDto param){
-        return boardService.delete(param);
+    public void delete(@RequestBody BoardDto.UpdateReqDto param){
+        boardService.delete(param.getId());
     }
 
     @GetMapping("/detail/{id}")
@@ -30,7 +31,7 @@ public class BoardRestController {
         return boardService.detail(id);
     }
     @GetMapping("/list")
-    public List<BoardDto.ListResDto> list(){
+    public List<BoardDto.DetailResDto> list(){
         return boardService.list();
     }
 }
