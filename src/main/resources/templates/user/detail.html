@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+</head>
+<body>
+<div>detail board</div>
+
+id: <input type="number" id="id"><br>
+title: <input type="text" id="title"><br>
+username: <input type="text" id="username"><br>
+password: <input type="text" id="password"><br>
+name: <input type="text" id="name"><br>
+phone: <input type="text" id="phone"><br>
+
+<button onclick="detail_user()">입력하기!</button>
+<button onclick="update_user()">수정하기</button>
+<button onclick="delete_user()">삭제하기</button>
+
+<script>
+  function delete_user(){
+    $.ajax({
+      url: '/api/user',
+      method: 'DELETE',
+      contentType: 'application/json; charset=utf-8',
+      data : JSON.stringify({
+        id : $("#id").val()
+      }),
+      success: function (data, status, xhr) {
+        alert("data : : " + JSON.stringify(data));
+      },
+      error: function (data, status, err) {
+      },
+      complete: function () {
+      }
+    });
+  }
+  function update_user(){
+    $.ajax({
+      url: '/api/user',
+      method: 'PUT',
+      contentType: 'application/json; charset=utf-8',
+      data : JSON.stringify({
+        id : $("#id").val()
+        , title:$("#title").val()
+        , username: $("#username").val()
+        , password: $("#password").val()
+        , name: $("#name").val()
+        , phone: $("#phone").val()
+      }),
+      success: function (data, status, xhr) {
+        alert("data : " + JSON.stringify(data));
+      },
+      error: function (data, status, err) {
+      },
+      complete: function () {
+      }
+    });
+  }
+  function detail_user(){
+    $.ajax({
+      url: '/api/user/detail/' + $("#id").val(),
+      method: 'GET',
+      success: function (data, status, xhr) {
+        alert("data : : " + JSON.stringify(data));
+        $("#title").val(data.title);
+        $("#username").val(data.username);
+        $("#password").val(data.password);
+        $("#name").val(data.name);
+        $("#phone").val(data.phone);
+      },
+      error: function (data, status, err) {
+      },
+      complete: function () {
+      }
+    });
+  }
+</script>
+</body>
+</html>
