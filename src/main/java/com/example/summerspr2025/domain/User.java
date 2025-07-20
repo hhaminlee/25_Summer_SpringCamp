@@ -9,27 +9,25 @@ import lombok.Setter;
 @Setter
 @Getter
 @Entity
-@NoArgsConstructor
 public class User extends AuditingField{
-    String title;
-    String username; // spring 기본값
-    String password; // spring 기본값
+    String username; // 아이디 기능!
+    String password; // 비밀번호!!
     String name;
     String phone;
 
-    private User(String title, String username, String password, String name, String phone){
-        this.title = title;
+    protected User() {}
+    private User(String username, String password, String name, String phone) {
         this.username = username;
         this.password = password;
         this.name = name;
         this.phone = phone;
     }
 
-    public static User of(String title, String username, String password, String name, String phone){
-        return new User(title, username, password, name, phone);
+    public static User of(String username, String password, String name, String phone) {
+        return new User(username, password, name, phone);
     }
 
-    public DefaultDto.CreateResDto toCreateResDto(){
+    public DefaultDto.CreateResDto toCreateResDto() {
         return DefaultDto.CreateResDto.builder().id(getId()).build();
     }
 }

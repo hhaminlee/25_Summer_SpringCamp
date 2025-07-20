@@ -3,6 +3,7 @@ package com.example.summerspr2025.service.impl;
 import com.example.summerspr2025.domain.User;
 import com.example.summerspr2025.dto.DefaultDto;
 import com.example.summerspr2025.dto.UserDto;
+import com.example.summerspr2025.mapper.UserMapper;
 import com.example.summerspr2025.repository.UserRepository;
 import com.example.summerspr2025.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,8 @@ import java.util.List;
 @Service
 public class UserServiceImpl implements UserService {
     final UserRepository userRepository;
+    final UserMapper userMapper;
+
     @Override
     public DefaultDto.CreateResDto create(UserDto.CreateReqDto param) {
         return userRepository.save(param.toEntity()).toCreateResDto();
@@ -22,55 +25,118 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void update(UserDto.UpdateReqDto param) {
-        long id = param.getId();
-
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("No data"));
-        if(param.getDeleted() != null){user.setDeleted(true);}
-        if(param.getTitle() != null){user.setTitle(param.getTitle());}
-        if(param.getUsername() != null){user.setUsername(param.getUsername());}
-        if(param.getPassword() != null){user.setPassword(param.getPassword());}
-        if(param.getName() != null){user.setName(param.getName());}
-        if(param.getPhone() != null){user.setPhone(param.getPhone());}
-
+        User user = userRepository.findById(param.getId()).orElseThrow(() -> new RuntimeException("no data"));
+        if(param.getDeleted() != null){ user.setDeleted(param.getDeleted()); }
+        if(param.getPassword() != null){ user.setPassword(param.getPassword()); }
+        if(param.getName() != null){ user.setName(param.getName()); }
+        if(param.getPhone() != null){ user.setPhone(param.getPhone()); }
         userRepository.save(user);
     }
 
     @Override
-    public void delete(long id) {
-        update(UserDto.UpdateReqDto.builder().id(id).deleted(true).build());
+    public void delete(UserDto.UpdateReqDto param) {
+        update(UserDto.UpdateReqDto.builder().id(param.getId()).deleted(true).build());
     }
 
-    public UserDto.DetailResDto get(long id) {
-
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("No data"));
-        return UserDto.DetailResDto.builder()
-                .id(user.getId())
-                .title(user.getTitle())
-                .username(user.getUsername())
-                .password(user.getPassword())
-                .name(user.getName())
-                .phone(user.getPhone())
-                .deleted(user.getDeleted())
-                .createdAt(user.getCreatedAt())
-                .modifiedAt(user.getModifiedAt())
+    public UserDto.DetailResDto get(DefaultDto.DetailReqDto param) {
+        UserDto.DetailResDto res = userMapper.detail(param);
+        return res;
+        /*
+        User user = userRepository.findById(param.getId()).orElseThrow(() -> new RuntimeException("no data"));
+        return UserDto.DetailResDto.builder().id(user.getId())
+                .deleted(user.getDeleted()).createdAt(user.getCreatedAt()).modifiedAt(user.getModifiedAt())
+                .username(user.getUsername()).name(user.getName()).phone(user.getPhone())
                 .build();
+        */
     }
 
     @Override
-    public UserDto.DetailResDto detail(long id) {
-        return get(id);
+    public UserDto.DetailResDto detail(DefaultDto.DetailReqDto param) {
+        return get(param);
     }
-
     @Override
-    public List<UserDto.DetailResDto> list() {
-        List<User> list = userRepository.findAll();
-        List<UserDto.DetailResDto> returnResult = new ArrayList<>();
-
-        for(User each: list){
-            returnResult.add(detail(each.getId()));
+    public List<UserDto.DetailResDto> list(UserDto.ListReqDto param) {
+        List<UserDto.DetailResDto> resultList = new ArrayList<>();
+        List<UserDto.DetailResDto> list = userMapper.list(param);
+        for(UserDto.DetailResDto each : list){
+            resultList.add(get(DefaultDto.DetailReqDto.builder().id(each.getId()).build()));
         }
-        return returnResult;
+        /*
+        List<User> list = userRepository.findAll();
+        for(User each : list){
+            boolean isSerached = true;
+            if(param.getDeleted() != null){
+                System.out.println("param.getDeleted() not null?");
+                if(each.getDeleted() != param.getDeleted()){
+                    isSerached = false;
+                    System.out.println("param.getDeleted() false");
+                }
+            }
+            if(param.getName() != null && !param.getName().isEmpty()){
+                System.out.println("param.getName() not null?");
+                if(!each.getName().contains(param.getName())){
+                    isSerached = false;
+                    System.out.println("param.getName() : " + isSerached);
+                }
+            }
+            if(param.getPhone() != null && !param.getPhone().isEmpty()){
+                System.out.println("param.getPhone() not null?");
+                if(!each.getPhone().contains(param.getPhone())){
+                    isSerached = false;
+                    System.out.println("param.getPhone() : " + isSerached);
+                }
+            }
+            if(isSerached){
+                resultList.add(get(DefaultDto.DetailReqDto.builder().id(each.getId()).build()));
+            }
+        }
+        */
+        return resultList;
+    }
+
+    @Override
+    public DefaultDto.PagedListResDto pagedList(UserDto.PagedListReqDto param){
+        int totalCount = userMapper.pagedListCount(param);
+        int perpage = 10; // 한번에 볼 페이지 정의
+
+        if (param.getPerpage() != null) {
+            perpage = param.getPerpage();
+        }
+        if (perpage < 2) {
+            perpage = 2;
+        }
+        param.setPerpage(perpage);
+
+        int totalPage = totalCount / perpage;
+        if (totalCount % perpage > 0) {
+            totalPage++;
+        }
+
+        int callpage = 1;
+        if (param.getCallpage() != null) {
+            callpage = param.getCallpage();
+        }
+        if (callpage > totalPage) {
+            callpage = totalPage;
+        }
+        if (callpage < 1) {
+            callpage = 1;
+        }
+        param.setCallpage(callpage);
+
+        int offset = (callpage - 1) * perpage;
+        param.setOffset(offset);
+
+        List<UserDto.DetailResDto> list = userMapper.pagedList(param);
+        List<UserDto.DetailResDto> returnList = new ArrayList<>();
+        for(UserDto.DetailResDto each : list){
+            returnList.add(get(DefaultDto.DetailReqDto.builder().id(each.getId()).build()));
+        }
+        return DefaultDto.PagedListResDto.builder()
+                .callpage(callpage)
+                .perpage(perpage)
+                .totalpage(totalPage)
+                .list(returnList)
+                .build();
     }
 }

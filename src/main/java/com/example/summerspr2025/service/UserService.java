@@ -10,7 +10,8 @@ import java.util.List;
 public interface UserService {
     DefaultDto.CreateResDto create(UserDto.CreateReqDto param);
     void update(UserDto.UpdateReqDto param);
-    void delete(long id);
-    UserDto.DetailResDto detail(long id);
-    List<UserDto.DetailResDto> list();
+    void delete(UserDto.UpdateReqDto param);
+    UserDto.DetailResDto detail(DefaultDto.DetailReqDto param);
+    List<UserDto.DetailResDto> list(UserDto.ListReqDto param);
+    DefaultDto.PagedListResDto pagedList(UserDto.PagedListReqDto param);
 }

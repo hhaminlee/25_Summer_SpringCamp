@@ -26,16 +26,21 @@ public class UserRestController {
     }
     @DeleteMapping("")
     public ResponseEntity<Void> delete(@RequestBody UserDto.UpdateReqDto param){
-        userService.delete(param.getId());
+        userService.delete(param);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    @GetMapping("/detail/{id}")
-    public ResponseEntity<UserDto.DetailResDto> detail(@PathVariable int id){
-        return ResponseEntity.ok(userService.detail(id));
+    @GetMapping("")
+    public ResponseEntity<UserDto.DetailResDto> detail(DefaultDto.DetailReqDto param){
+        return ResponseEntity.ok(userService.detail(param));
     }
     @GetMapping("/list")
-    public ResponseEntity<List<UserDto.DetailResDto>> list(){
-        return ResponseEntity.ok(userService.list());
+    public ResponseEntity<List<UserDto.DetailResDto>> list(UserDto.ListReqDto param){
+        return ResponseEntity.ok(userService.list(param));
+    }
+
+    @GetMapping("/pagedList")
+    public ResponseEntity<DefaultDto.PagedListResDto> pagedList(UserDto.PagedListReqDto param){
+        return ResponseEntity.ok(userService.pagedList(param));
     }
 }
