@@ -45,4 +45,11 @@ public class UserDto {
         String name;
         String phone;
     }
+
+    @Setter @Getter @SuperBuilder @NoArgsConstructor @AllArgsConstructor
+    public static class ScrollListReqDto extends DefaultDto.ScrollListReqDto {
+        String username;
+        String name;
+        String phone;
+    }
 }

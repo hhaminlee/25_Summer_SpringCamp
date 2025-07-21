@@ -45,6 +45,53 @@ public class DefaultDto {
         String orderway; //정렬 방향!
 
         Boolean deleted;
+        public PagedListResDto init(int totalCount){
+            int perpage = 10;
+            if (getPerpage() != null) {
+                perpage = getPerpage();
+            }
+            if (perpage < 2) {
+                perpage = 2;
+            }
+            setPerpage(perpage);
+
+            int totalPage = totalCount / perpage;
+            if(totalCount % perpage > 0){
+                totalPage++;
+            }
+            int callpage = 1;
+            if (getCallpage() != null) {
+                callpage = getCallpage();
+            }
+            if (callpage > totalPage) {
+                callpage = totalPage;
+            }
+            if (callpage < 1) {
+                callpage = 1;
+            }
+            setCallpage(callpage);
+
+            int offset = (callpage - 1) *  perpage;
+            setOffset(offset);
+
+            //정렬 초기값 설정
+            String orderby = "id";
+            if(getOrderby() != null && !getOrderby().isEmpty()){
+                orderby = getOrderby();
+            }
+            setOrderby(orderby);
+            String orderway = "desc";
+            if(getOrderway() != null && !getOrderway().isEmpty()){
+                orderway = getOrderway();
+            }
+            setOrderway(orderway);
+
+            return PagedListResDto.builder().callpage(callpage)
+                    .perpage(perpage)
+                    .totalpage(totalPage)
+                    .totalcount(totalCount)
+                    .build();
+        }
     }
     @Setter @Getter @SuperBuilder @NoArgsConstructor @AllArgsConstructor
     public static class PagedListResDto {
@@ -54,5 +101,31 @@ public class DefaultDto {
         Integer totalcount; // 전체 글 갯수
 
         Object list;
+    }
+
+    @Setter @Getter @SuperBuilder @NoArgsConstructor @AllArgsConstructor
+    public static class ScrollListReqDto {
+        Long cursor; // 불러올 자료의 기준
+        Integer perpage; // 한번에 몇개씩 볼지
+        String orderway; // 정렬 방향
+
+        Boolean deleted;
+
+        public void init(){
+            int perpage = 10;
+            if(getPerpage() != null){
+                perpage = getPerpage();
+            }
+            if(perpage < 2){
+                perpage = 2;
+            }
+            setPerpage(perpage);
+
+            String orderway = "desc";
+            if(getOrderway() != null && !getOrderway().isEmpty()){
+                orderway = getOrderway();
+            }
+            setOrderway(orderway);
+        }
     }
 }

@@ -12,4 +12,8 @@ public class UserController {
     public String page(@PathVariable String page){
         return "user/" + page;
     }
+    @RequestMapping("/{page}/{id}")
+    public String page2(@PathVariable String page, @PathVariable String id){
+        return "user/"+page;
+    }
 }

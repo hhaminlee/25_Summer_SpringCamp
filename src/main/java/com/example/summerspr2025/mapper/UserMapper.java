@@ -12,4 +12,5 @@ public interface UserMapper {
     List<UserDto.DetailResDto> list(UserDto.ListReqDto param);
     List<UserDto.DetailResDto> pagedList(UserDto.PagedListReqDto param);
     int pagedListCount(UserDto.PagedListReqDto param);
+    List<UserDto.DetailResDto> scrollList(UserDto.ScrollListReqDto param);
 }

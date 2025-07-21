@@ -2,20 +2,17 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Title</title>
+  <title>User Detail</title>
   <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 </head>
 <body>
-<div>detail board</div>
-
-id: <input type="number" id="id"><br>
-title: <input type="text" id="title"><br>
-username: <input type="text" id="username"><br>
-password: <input type="text" id="password"><br>
-name: <input type="text" id="name"><br>
-phone: <input type="text" id="phone"><br>
-
-<button onclick="detail_user()">입력하기!</button>
+detail <br/>
+id : <input type="number" id="input_id" readonly="readonly"/> <br/>
+deleted : <input type="checkbox" id="input_deleted" /> <br/>
+username : <input type="text" id="input_username" /> <br/>
+name : <input type="text" id="input_name" /> <br/>
+phone : <input type="text" id="input_phone" /> <br/>
+<button onclick="detail_user()">조회하기</button>
 <button onclick="update_user()">수정하기</button>
 <button onclick="delete_user()">삭제하기</button>
 
@@ -24,9 +21,9 @@ phone: <input type="text" id="phone"><br>
     $.ajax({
       url: '/api/user',
       method: 'DELETE',
-      contentType: 'application/json; charset=utf-8',
+      contentType : 'application/json; charset=utf-8',
       data : JSON.stringify({
-        id : $("#id").val()
+        id : $("#input_id").val()
       }),
       success: function (data, status, xhr) {
         alert("data : : " + JSON.stringify(data));
@@ -41,17 +38,15 @@ phone: <input type="text" id="phone"><br>
     $.ajax({
       url: '/api/user',
       method: 'PUT',
-      contentType: 'application/json; charset=utf-8',
+      contentType : 'application/json; charset=utf-8',
       data : JSON.stringify({
-        id : $("#id").val()
-        , title:$("#title").val()
-        , username: $("#username").val()
-        , password: $("#password").val()
-        , name: $("#name").val()
-        , phone: $("#phone").val()
+        id : $("#input_id").val()
+        , deleted : $("#input_deleted").prop("checked")
+        , name : $("#input_name").val()
+        , phone : $("#input_phone").val()
       }),
       success: function (data, status, xhr) {
-        alert("data : " + JSON.stringify(data));
+        alert("data : : " + JSON.stringify(data));
       },
       error: function (data, status, err) {
       },
@@ -59,17 +54,42 @@ phone: <input type="text" id="phone"><br>
       }
     });
   }
+
+  $(function(){
+    let tempHref = location.href;
+
+    let tempArray = tempHref.split("/");
+    if(tempArray.length > 0){
+      tempHref = tempArray[tempArray.length -1];
+    }
+
+    tempArray = tempHref.split("?");
+    if(tempArray.length > 0){
+      tempHref = tempArray[0];
+    }
+    $("#input_id").val(tempHref);
+    detail_user();
+  });
   function detail_user(){
     $.ajax({
-      url: '/api/user/detail/' + $("#id").val(),
+      url: '/api/user',
       method: 'GET',
+      data : {
+        id : $("#input_id").val()
+      },
       success: function (data, status, xhr) {
         alert("data : : " + JSON.stringify(data));
-        $("#title").val(data.title);
-        $("#username").val(data.username);
-        $("#password").val(data.password);
-        $("#name").val(data.name);
-        $("#phone").val(data.phone);
+        let user = data;
+
+        let tempKeys = Object.keys(user);
+        for(let each of tempKeys){
+          let tempType = $("#input_" + each).attr("type");
+          if(tempType === "checkbox"){
+            $("#input_" + each).prop("checked", user[each]);
+          } else {
+            $("#input_" + each).val(user[each]);
+          }
+        }
       },
       error: function (data, status, err) {
       },
@@ -78,5 +98,6 @@ phone: <input type="text" id="phone"><br>
     });
   }
 </script>
+
 </body>
 </html>
